@@ -1,0 +1,41 @@
+# --- Python Cache & Bytecode ---
+# Compiled Python files
+*.pyc
+*.pyo
+# Python bytecode caches
+__pycache__/
+# Specific Python versions bytecode caches (e.g., .python-3.9/)
+.python-*.bytecode
+
+# --- Virtual Environment ---
+# Ignore Python virtual environment directories
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+# Ignore activate scripts (often in bin/ or Scripts/)
+bin/activate*
+Scripts/activate*
+
+# --- C Core Compiled Output ---
+# The shared library created from radix.c
+radix.so
+# Intermediate object files if any were generated (though command builds directly to .so)
+*.o
+
+# --- IDE and Editor Configuration ---
+# VS Code
+.vscode/
+# PyCharm
+.idea/
+# Vim/Emacs swap files
+*.swp
+*~
+
+# --- OS Generated Files ---
+# macOS specific files
+.DS_Store
+# Windows thumbnail cache
+Thumbs.db

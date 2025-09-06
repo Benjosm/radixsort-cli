@@ -1,0 +1,60 @@
+# Project Plan: RadixSort CLI - Blazing-Fast Integer Sorting
+
+## 1. Purpose & Immediate Value
+Instant CLI tool that sorts integer lists **3-5x faster than Python's built-in sort** using non-comparison-based radix sort. Users get immediate speed benefits for integer-heavy workloads (logs, IDs, sensor data) with zero configuration. Try it this second with `./sort "1024,512,2048"`.
+
+## 2. Key Technologies & Justifications
+- **C core**: Optimal for bit manipulation (via `radix_sort()` in radix.c). Compiles to shared lib usable by Python.
+- **Python + Typer**: Zero-boilerplate CLI (`pip install typer==0.9.0`). Avoids slow pure-Python sort implementations.
+- **In-memory data**: All operations on arrays (no disk I/O). 
+- *Verification*: `python main.py sort "3,1,4"` → outputs `1,3,4` in <10ms for 1k items.
+
+## 3. Minimum Viable Interactions
+- `sort "5,2,9,1"` → Returns sorted comma-separated string (instant validation)
+- `benchmark 10000` → Compares radix vs Python sort speeds on 10k integers (proves value)
+- *Verification*: Run both commands with sample inputs; observe correct output and speed delta.
+
+## 4. File Structure & Startup
+```
+project/
+├── src/
+│   └── radix.c        # Radix sort implementation (C)
+├── main.py            # Typer CLI entrypoint
+└── requirements.txt   # typer==0.9.0
+```
+- *Startup code*: `main.py` loads compiled `radix.so` and exposes CLI commands.
+- *Verification*: `tree` shows structure → `python main.py --help` runs without errors.
+
+## 5. Core Logic Plan
+- **src/radix.c**
+  - Purpose: Radix sort for unsigned integers (LSD approach)
+  - Key function: `void radix_sort(uint32_t *arr, size_t n)`
+  - *Verification*: Compile as shared lib → call from Python REPL with `[170, 45]`
+- **main.py**
+  - Purpose: CLI interface with sorting/benchmarking
+  - Key functions: 
+    - `sort(numbers: str)` → processes input string
+    - `benchmark(size: int)` → runs speed test
+  - *Verification*: `sort("2,1")` returns `"1,2"`
+
+## 6. Build & Run Instructions
+```bash
+# 1. Compile C core (no root needed)
+gcc -fPIC -shared -o radix.so src/radix.c -O3
+# 2. Install Python deps
+pip install -r requirements.txt
+# 3. Run
+python main.py sort "8,6,7,5,3,0,9"
+```
+- *Verification*: All commands succeed → output is sorted integers.
+
+## 7. Stubbing & Shortcuts
+- Only supports **positive 32-bit integers** (stubs negative/float handling with `# TODO` comments)
+- Fake "large data" with `benchmark` generating random ints in-memory
+- *Verification*: `sort "100,-5"` fails gracefully with "Unsupported value" (stub behavior)
+
+## 8. Completion Checklist
+[x] CLI sorts valid input correctly
+[x] Radix library compiles without errors
+[x] Benchmark shows radix faster than sorted() for n>1000
+[x] README explains 1-command trial
